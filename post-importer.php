@@ -10,62 +10,7 @@
 
 /*******************************************************************************************************************************************/
 
-/**
-*  Activation Hook - 
-*  Runs when plugin is activated
-*
-**/
 
-
-register_activation_hook( __FILE__, 'activating_post_importer_plugin' );
-
-function activating_post_importer_plugin () {
-
-    // Create Database Table, 
-
-}
-
-
-
-/**
-*  Deactivation Hook - 
-*  Runs when plugin is deactivated
-*
-**/
-
-
-register_deactivation_hook( __FILE__, 'deactivating_post_importer_plugin' );
-
-function deactivating_post_importer_plugin () {
-
-    // Remove Temporary data
-
-        // Unregister the post type, so the rules are no longer in memory.
-       
-}
-
-
-
-
-/**
-*  Uninstall Hook - 
-*  Runs when plugin is deleted
-*
-**/
-
-
-register_uninstall_hook( __FILE__, 'uninstall_post_importer_plugin' );
-
-function uninstall_post_importer_plugin () {
-
-    // Remove Database Table, custom post type etc
-}
-
-
-
-
-
-/*******************************************************************************************************************************************/
 
 /**
 *  Creating Article custom post type - 
@@ -79,7 +24,7 @@ add_action ( 'init', 'post_importer_plugin_create_article_post_type');
 
 function post_importer_plugin_create_article_post_type () {
   
-        // Registers the custom post type plugin.
+        // Registers the custom post type
         $labels = array(
             'name'                  => _x( 'Articles', 'Post type general name', 'textdomain' ),
             'singular_name'         => _x( 'Article', 'Post type singular name', 'textdomain' ),
@@ -126,7 +71,8 @@ function post_importer_plugin_create_article_post_type () {
 /*******************************************************************************************************************************************/
 
 /**
-*  Creating Article custom post type - 
+*
+*  Add Submenu to Article for Importing Authors and Articles
 *  
 *
 **/
@@ -154,7 +100,7 @@ function post_importer_plugin_add_importer_submenu_page()
 
 }
 
-
+//Rendering Template for Submenu
 function post_importer_submenu_page_html () {
       // check user capabilities
       if ( ! current_user_can( 'manage_options' ) ) {
@@ -174,10 +120,11 @@ function post_importer_submenu_page_html () {
     <?php
     if ('POST' === $_SERVER['REQUEST_METHOD']) {
 
+         //Checking if Import request is for Authors
+
         if( isset( $_POST['post_importer_authers'])) {
         
-         
-   
+
             $url      = 'https://jsonplaceholder.typicode.com/users';
             $response = wp_remote_get( esc_url_raw( $url ) );
             
@@ -210,6 +157,7 @@ function post_importer_submenu_page_html () {
                 
                     if ( ! is_wp_error( $user_id ) ) {
                     
+                        // Creating Meta Data for Users
                     echo "User ID : ". $user_id;
                     add_user_meta( $user_id, 'post_importer_auther_street', $user['address']['street']);
                     add_user_meta( $user_id, 'post_importer_auther_suite', $user['address']['suite']);
@@ -235,6 +183,7 @@ function post_importer_submenu_page_html () {
 
     }
 
+         //Checking if Import request is for Articles
     if( isset( $_POST['post_importer_articles'])) {
 
         $url      = 'https://jsonplaceholder.typicode.com/posts';
@@ -276,9 +225,4 @@ function post_importer_submenu_page_html () {
 
     }
 }
-}
-
-function post_importer_submenu_page_html_submit () {
-
-    
 }
